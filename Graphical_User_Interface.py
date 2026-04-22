@@ -5,15 +5,14 @@ from tkinter import ttk
 
 
 
-
 class GUI:
     def __init__(self, parent):
         self.parent = parent
 
         self.start_menu_frame = ttk.Frame(parent)
-        self.start_menu_frame.grid(column=0, row=0)
+        #self.start_menu_frame.grid(column=0, row=0)
 
-        self.start_menu_start_button = ttk.Button(self.start_menu_frame, text='Start')
+        self.start_menu_start_button = ttk.Button(self.start_menu_frame, text='Start', command=self.start)
         self.start_menu_start_button.grid(column=0, row=0)
 
         self.start_menu_quit_button = ttk.Button(self.start_menu_frame, text='quit', command=self.quit)
@@ -38,18 +37,19 @@ class GUI:
         self.quiz_select_custom_button.grid(column=1, row=2)
 
         self.options_menu_frame = ttk.Frame(parent)
-        #self.options_menu_frame.grid(column=0, row=0)
+        self.options_menu_frame.grid(column=0, row=0)
 
         self.options_menu_difficulty_label = ttk.Label(self.options_menu_frame, text='Difficulty')
         self.options_menu_difficulty_label.grid(column=0,row=0)
 
-        self.options_menu_easy_radio_button = ttk.Radiobutton(self.options_menu_frame, text='easy')
+        self.options_menu_difficulty_variable = StringVar()
+        self.options_menu_easy_radio_button = ttk.Radiobutton(self.options_menu_frame, text='easy', value='easy', variable=self.options_menu_difficulty_variable)
         self.options_menu_easy_radio_button.grid(column=0, row=1)
 
-        self.options_menu_medium_radio_button = ttk.Radiobutton(self.options_menu_frame, text='medium')
+        self.options_menu_medium_radio_button = ttk.Radiobutton(self.options_menu_frame, text='medium', value='medium', variable=self.options_menu_difficulty_variable)
         self.options_menu_medium_radio_button.grid(column=0, row=2)
 
-        self.options_menu_hard_radio_button = ttk.Radiobutton(self.options_menu_frame, text='hard')
+        self.options_menu_hard_radio_button = ttk.Radiobutton(self.options_menu_frame, text='hard', value='hard', variable=self.options_menu_difficulty_variable)
         self.options_menu_hard_radio_button.grid(column=0, row=3)
 
         self.options_menu_subjects_label = ttk.Label(self.options_menu_frame, text='Subjects')
@@ -57,7 +57,8 @@ class GUI:
 
 
     def start(self):
-        pass
+        self.start_menu_frame.grid_forget()
+        self.quiz_select_frame.grid(column=0, row=0)
 
     def quit(self):
         self.parent.destroy()
