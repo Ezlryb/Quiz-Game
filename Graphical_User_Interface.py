@@ -1,7 +1,7 @@
 from tkinter import *
 from tkinter import messagebox
 from tkinter import ttk
-import Questions
+from Questions import *
 
 
 
@@ -18,7 +18,7 @@ class GUI:
 
         self.start_menu_frame = ttk.Frame(parent)
         self.start_menu_frame.grid(column=0, row=0)
-
+  
         self.start_menu_start_button = ttk.Button(self.start_menu_frame, text='Start', command=self.start)
         self.start_menu_start_button.grid(column=0, row=0)
 
@@ -67,6 +67,12 @@ class GUI:
 
         self.options_menu_start_button = ttk.Button(self.options_menu_frame, text='Start')
         self.options_menu_start_button.grid(column=0, row=4, columnspan=2)
+
+        self.quiz_frame = ttk.Frame(parent)
+        self.quiz_frame.grid(column=0, row=0)
+
+        self.quiz_question_label = ttk.Label(self.quiz_frame)
+        self.quiz_question_label.grid(column=0, row=1)
 
 
 
