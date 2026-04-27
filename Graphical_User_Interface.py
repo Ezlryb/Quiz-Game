@@ -1,8 +1,7 @@
 from tkinter import *
 from tkinter import messagebox
 from tkinter import ttk
-from Questions import *
-
+from Data_store import *
 
 
 class Quiz:
@@ -13,7 +12,7 @@ class Quiz:
 class GUI:
     def __init__(self, parent):
         self.parent = parent
-        self.quiz_genre = ''
+        self.genre = ''
         self.subjects_list = ''
 
         self.start_menu_frame = ttk.Frame(parent)
@@ -31,16 +30,16 @@ class GUI:
         self.quiz_select_title_label = ttk.Label(self.quiz_select_frame, text='Which quiz?')
         self.quiz_select_title_label.grid(column=0, row=0, columnspan=2)
 
-        self.quiz_select_maths_button = ttk.Button(self.quiz_select_frame, text='Maths', command=lambda: self.select_genre('maths'))
+        self.quiz_select_maths_button = ttk.Button(self.quiz_select_frame, text='Maths', command=lambda: self.select_genre(maths_data))
         self.quiz_select_maths_button.grid(column=0, row=1)
 
-        self.quiz_select_trivia_button = ttk.Button(self.quiz_select_frame, text='Trivia', command=lambda: self.select_genre('trivia'))
+        self.quiz_select_trivia_button = ttk.Button(self.quiz_select_frame, text='Trivia', command=lambda: self.select_genre(trivia_data))
         self.quiz_select_trivia_button.grid(column=1, row=1)
 
-        self.quiz_select_puzzles_button = ttk.Button(self.quiz_select_frame, text='Puzzles', command=lambda: self.select_genre('puzzles'))
+        self.quiz_select_puzzles_button = ttk.Button(self.quiz_select_frame, text='Puzzles', command=lambda: self.select_genre(puzzle_data))
         self.quiz_select_puzzles_button.grid(column=0, row=2)
 
-        self.quiz_select_custom_button = ttk.Button(self.quiz_select_frame, text='Custom', command=lambda: self.select_genre('custom'))
+        self.quiz_select_custom_button = ttk.Button(self.quiz_select_frame, text='Custom', command=lambda: self.select_genre([maths_data, trivia_data, puzzle_data]))
         self.quiz_select_custom_button.grid(column=1, row=2)
 
         self.options_menu_frame = ttk.Frame(parent)
@@ -64,8 +63,12 @@ class GUI:
 
         self.options_menu_subjects_label = ttk.Label(self.options_menu_frame, text='Subjects')
         self.options_menu_subjects_label.grid(column=1, row=0)
+        
+        self.options_menu_subject_check_button_list = []
+        self.options_menu_subject_check_button_frame = ttk.Frame(self.options_menu_frame)
+        self.options_menu_subject_check_button_frame.grid(column=1, row=1)
 
-        self.options_menu_start_button = ttk.Button(self.options_menu_frame, text='Start')
+        self.options_menu_start_button = ttk.Button(self.options_menu_frame, text='Start', command=self.start_quiz)
         self.options_menu_start_button.grid(column=0, row=4, columnspan=2)
 
         self.quiz_frame = ttk.Frame(parent)
@@ -83,13 +86,34 @@ class GUI:
     def quit(self):
         self.parent.destroy()
 
+    def create_subject_checkbuttons(self, genre):
+        return_list = []
+        for subject_string in genre.keys():
+            temp_variable = StringVar()
+            temp_button = ttk.Checkbutton(self.options_menu_subject_check_button_frame, variable=temp_variable, text=subject_string, onvalue=subject_string, offvalue='off')
+            temp_button.var = temp_variable
+            temp_button.pack()
+            temp_button
+            return_list.append(subject_string)
+            self.options_menu_subject_check_button_list.append(temp_button)
+        return return_list
+
     def select_genre(self, genre):
-        if genre == 'trivia':
-            pass
+        self.genre = genre
+        self.subjects_list = []
+        if type(self.genre) == list:
+            for item in genre:
+                self.subjects_list += self.create_subject_checkbuttons(item)
+        else:
+            self.subjects_list = self.create_subject_checkbuttons(genre)
+        
+        self.options_menu_subject_check_button_list = [self.create_subject_checkbuttons]
+
         self.quiz_select_frame.grid_forget()
         self.options_menu_frame.grid(column=0, row=0)
         
-
+    def start_quiz(self):
+        pass
 
 
 if __name__ == "__main__":
