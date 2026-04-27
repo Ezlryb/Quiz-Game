@@ -2,11 +2,7 @@ from tkinter import *
 from tkinter import messagebox
 from tkinter import ttk
 from Data_store import *
-
-
-class Quiz:
-    def __init__(self, type, questions):
-        pass
+from random import *
 
 
 class GUI:
@@ -65,6 +61,7 @@ class GUI:
         self.options_menu_subjects_label.grid(column=1, row=0)
         
         self.options_menu_subject_check_button_list = []
+
         self.options_menu_subject_check_button_frame = ttk.Frame(self.options_menu_frame)
         self.options_menu_subject_check_button_frame.grid(column=1, row=1)
 
@@ -72,11 +69,19 @@ class GUI:
         self.options_menu_start_button.grid(column=0, row=4, columnspan=2)
 
         self.quiz_frame = ttk.Frame(parent)
-        self.quiz_frame.grid(column=0, row=0)
+        # self.quiz_frame.grid(column=0, row=0)
 
-        self.quiz_question_label = ttk.Label(self.quiz_frame)
-        self.quiz_question_label.grid(column=0, row=1)
+        self.quiz_question_label = ttk.Label(self.quiz_frame, text='test')
+        self.quiz_question_label.grid(column=0, row=0, columnspan=2)
 
+        self.quiz_answer_variable = StringVar()
+        self.quiz_answer_entry = ttk.Entry(self.quiz_frame)
+        
+        self.quiz_answer_radiobutton1 = ttk.Radiobutton(self.quiz_frame, variable=self.quiz_answer_variable)
+        self.quiz_answer_radiobutton2 = ttk.Radiobutton(self.quiz_frame, variable=self.quiz_answer_variable)
+        self.quiz_answer_radiobutton3 = ttk.Radiobutton(self.quiz_frame, variable=self.quiz_answer_variable)
+        self.quiz_answer_radiobutton4 = ttk.Radiobutton(self.quiz_frame, variable=self.quiz_answer_variable)
+        
 
 
     def start(self):
@@ -111,9 +116,31 @@ class GUI:
 
         self.quiz_select_frame.grid_forget()
         self.options_menu_frame.grid(column=0, row=0)
-        
+
+    def quiz_entry_button_setup(self, question):
+        self.quiz_answer_entry.grid_forget()
+        self.quiz_answer_radiobutton1.grid_forget()
+        self.quiz_answer_radiobutton2.grid_forget()
+        self.quiz_answer_radiobutton3.grid_forget()
+        self.quiz_answer_radiobutton4.grid_forget()
+        if question.number_of_answers == 1:
+            self.quiz_answer_entry.grid(column=2, row=0)
+        elif question.number_of_answers >= 2:
+
+            self.quiz_answer_radiobutton1.grid(column=0, row=1)
+            self.quiz_answer_radiobutton2.grid(column=1, row=1)
+            if question.number_of_answers == 3:
+                self.quiz_answer_radiobutton3.grid(column=0, row=2, columnspan=2)
+            elif question.number_of_answers == 4:
+                self.quiz_answer_radiobutton3.grid(column=0, row=2)
+                self.quiz_answer_radiobutton4.grid(column=1, row=2)
+
+
+
     def start_quiz(self):
-        pass
+        self.options_menu_frame.grid_forget()
+        self.quiz_entry_button_setup(self.genre['history'].questions[1])
+        self.quiz_frame.grid(column=0, row=0)
 
 
 if __name__ == "__main__":
