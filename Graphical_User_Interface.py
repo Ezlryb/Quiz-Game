@@ -69,6 +69,15 @@ class GUI:
         self.options_menu_start_button = ttk.Button(self.options_menu_frame, text='Start', command=self.start_quiz)
         self.options_menu_start_button.grid(column=0, row=4, columnspan=2)
 
+        self.question_pick_frame = ttk.Frame(parent)
+        
+        self.questions_pick_button1 = ttk.Button(self.question_pick_frame)
+        self.questions_pick_button2 = ttk.Button(self.question_pick_frame)
+        self.questions_pick_button3 = ttk.Button(self.question_pick_frame)
+        self.questions_pick_button4 = ttk.Button(self.question_pick_frame)
+
+
+
         self.quiz_frame = ttk.Frame(parent)
         # self.quiz_frame.grid(column=0, row=0)
 
@@ -82,8 +91,12 @@ class GUI:
         self.quiz_answer_radiobutton2 = ttk.Radiobutton(self.quiz_frame, variable=self.quiz_answer_variable)
         self.quiz_answer_radiobutton3 = ttk.Radiobutton(self.quiz_frame, variable=self.quiz_answer_variable)
         self.quiz_answer_radiobutton4 = ttk.Radiobutton(self.quiz_frame, variable=self.quiz_answer_variable)
-        
 
+        self.quiz_check_right_answer_button = ttk.Button(self.quiz_frame, text='Check')
+        self.quiz_check_right_answer_button.grid(column=0, row=3)
+        
+        self.quiz_next_button = ttk.Button(self.quiz_frame, text='Next >', state=DISABLED)
+        self.quiz_next_button.grid(column=1, row=3)
 
     def start(self):
         self.start_menu_frame.grid_forget()
@@ -112,49 +125,82 @@ class GUI:
         self.options_menu_frame.grid(column=0, row=0)
 
     def quiz_entry_button_setup(self, question):
+        answers = question.all_answers
+        shuffle(answers)
         self.quiz_answer_entry.grid_forget()
         self.quiz_answer_radiobutton1.grid_forget()
         self.quiz_answer_radiobutton2.grid_forget()
         self.quiz_answer_radiobutton3.grid_forget()
         self.quiz_answer_radiobutton4.grid_forget()
         self.quiz_question_label.configure(text=question.question)
-        if question.number_of_answers == 1:
+        if len(question.all_answers) == 1:
             self.quiz_answer_entry.grid(column=2, row=0)
-        elif question.number_of_answers >= 2:
-
+        elif len(question.all_answers) >= 2:
+            self.quiz_answer_radiobutton1.configure(text=answers[0], value=answers[0])
+            self.quiz_answer_radiobutton2.configure(text=answers[1], value=answers[1])
             self.quiz_answer_radiobutton1.grid(column=0, row=1)
             self.quiz_answer_radiobutton2.grid(column=1, row=1)
-            if question.number_of_answers == 3:
+            if len(question.all_answers) == 3:
+                self.quiz_answer_radiobutton3.configure(text=answers[2], value=answers[2])
                 self.quiz_answer_radiobutton3.grid(column=0, row=2, columnspan=2)
-            elif question.number_of_answers == 4:
+            elif len(question.all_answers) == 4:
+                self.quiz_answer_radiobutton3.configure(text=answers[2], value=answers[2])
+                self.quiz_answer_radiobutton4.configure(text=answers[3], value=answers[3])
                 self.quiz_answer_radiobutton3.grid(column=0, row=2)
                 self.quiz_answer_radiobutton4.grid(column=1, row=2)
 
-    def choose_question(self, subjects):
-        if self.options_menu_difficulty_variable == 1:
-            pass
+    def begin_question(self, subject):
+        self.question_pick_frame.grid_forget()
+        self.currect_question = self.all_quiz_questions[subject].pop(randrange(len(self.all_quiz_questions[subject])))
+        self.quiz_entry_button_setup(self.currect_question)
+        self.quiz_frame.grid(column=0, row=0)   
 
+    def choose_question(self):
+        if len(self.all_quiz_questions.keys()) >= 4:
+            subjects = sample(list(self.all_quiz_questions.keys()), 4)
+            self.questions_pick_button3.configure(text=subjects[2], command=lambda: self.begin_question(subjects[2]), state=NORMAL)
+            self.questions_pick_button4.configure(text=subjects[3], command=lambda: self.begin_question(subjects[3]), state=NORMAL)
+            self.questions_pick_button3.grid(column=0, row=2)
+            self.questions_pick_button4.grid(column=1, row=2)
+        else:
+            subjects = list(self.all_quiz_questions.keys())
+        if len(self.all_quiz_questions.keys()) == 1:
+            self.begin_question(subjects[0])
+        elif len(self.all_quiz_questions.keys()) >= 2:
+            self.questions_pick_button1.configure(text=subjects[0], command=lambda: self.begin_question(subjects[0]), state=NORMAL)
+            self.questions_pick_button2.configure(text=subjects[1], command=lambda: self.begin_question(subjects[1]), state=NORMAL)
+            self.questions_pick_button1.grid(column=0, row=1)
+            self.questions_pick_button2.grid(column=1, row=1)
+        if len(self.all_quiz_questions.keys()) == 3:
+            self.questions_pick_button3.configure(text=subjects[2], command=lambda: self.begin_question(subjects[2]), state=NORMAL)
+            self.questions_pick_button3.grid(column=0, row=2, columnspan=2)
+        self.question_pick_frame.grid(column=0, row=0)
 
     def start_quiz(self):
         self.subjects_selected_list = []
-        all_quiz_questions = {}
+        self.all_quiz_questions = {}
         for button in self.options_menu_subject_check_button_list:
             if str(button.var.get()) != '':
                 self.subjects_selected_list.append(button.var.get()) # A list of all selected subjects.
         for subject in self.subjects_selected_list:
-            startvar = int(self.options_menu_difficulty_variable.get()*self.QUESTIONS_PER_TOPIC/3)
-            endvar = int(self.options_menu_difficulty_variable.get()*self.QUESTIONS_PER_TOPIC/3+self.QUESTIONS_PER_TOPIC/3)
-            all_quiz_questions[self.genre[subject].name] = self.genre[subject].questions[startvar:endvar]
-
-        for type, questions in all_quiz_questions.items():
-            for question in questions:
-                print(type + ": " + question.question + " " + str(question.correct_answer))
-        
-        
+            startvar = int(self.options_menu_difficulty_variable.get()*self.QUESTIONS_PER_TOPIC/3) # gets the first value in the subject list of questions to pull from
+            endvar = int(self.options_menu_difficulty_variable.get()*self.QUESTIONS_PER_TOPIC/3+self.QUESTIONS_PER_TOPIC/3) # gets the last ^^^
+            self.all_quiz_questions[self.genre[subject].name] = self.genre[subject].questions[startvar:endvar] 
         self.options_menu_frame.grid_forget()
+        self.choose_question()
 
+    def check_answer(self):
+        if self.quiz_answer_variable == self.currect_question:
+            pass
+        else:
+            pass
+        self.quiz_check_right_answer_button['state'] = DISABLED
+        self.quiz_answer_radiobutton1['state'] = DISABLED
+        self.quiz_answer_radiobutton2['state'] = DISABLED
+        self.quiz_answer_radiobutton3['state'] = DISABLED
+        self.quiz_answer_radiobutton4['state'] = DISABLED
+        self.quiz_next_button['state'] = NORMAL
 
-        self.quiz_frame.grid(column=0, row=0)
 
 
 if __name__ == "__main__":

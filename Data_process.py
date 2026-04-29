@@ -7,18 +7,9 @@ class Question:
         self.incorrect_answer1 = incorrect_answer1 # eg. 3 | donald duck | a candle
         self.incorrect_answer2 = incorrect_answer2 # eg. 1 | me | the human soul
         self.incorrect_answer3 = incorrect_answer3 # eg. 90 | turn it to eleven | quicksand
-        self.number_of_answers = 0
-        self.count_answers()
-    
-    def count_answers(self):
-        if self.correct_answer != '':
-            self.number_of_answers += 1
-        if self.incorrect_answer1 != '':
-            self.number_of_answers += 1
-        if self.incorrect_answer2 != '':
-            self.number_of_answers += 1
-        if self.incorrect_answer3 != '':
-            self.number_of_answers += 1
+        self.all_answers = [correct_answer, incorrect_answer1, incorrect_answer2, incorrect_answer3]
+        while '' in self.all_answers:
+            self.all_answers.remove('')
 
 
 class Subject:
