@@ -1,12 +1,13 @@
 from tkinter import *
 from tkinter import messagebox
 from tkinter import ttk
-from Data_store import *
+from Data_process import *
 from random import *
 
 
 class GUI:
     def __init__(self, parent):
+        self.QUESTIONS_PER_TOPIC = 21
         self.parent = parent
         self.genre = ''
         self.subjects_list = ''
@@ -35,7 +36,7 @@ class GUI:
         self.quiz_select_puzzles_button = ttk.Button(self.quiz_select_frame, text='Puzzles', command=lambda: self.select_genre(puzzle_data))
         self.quiz_select_puzzles_button.grid(column=0, row=2)
 
-        self.quiz_select_custom_button = ttk.Button(self.quiz_select_frame, text='Custom', command=lambda: self.select_genre([maths_data, trivia_data, puzzle_data]))
+        self.quiz_select_custom_button = ttk.Button(self.quiz_select_frame, text='Custom', command=lambda: self.select_genre(all_data))
         self.quiz_select_custom_button.grid(column=1, row=2)
 
         self.options_menu_frame = ttk.Frame(parent)
@@ -47,14 +48,14 @@ class GUI:
         self.options_menu_difficulty_frame = ttk.Frame(self.options_menu_frame)
         self.options_menu_difficulty_frame.grid(column=0, row=1)
 
-        self.options_menu_difficulty_variable = StringVar()
-        self.options_menu_easy_radio_button = ttk.Radiobutton(self.options_menu_difficulty_frame, text='easy', value='easy', variable=self.options_menu_difficulty_variable)
+        self.options_menu_difficulty_variable = IntVar()
+        self.options_menu_easy_radio_button = ttk.Radiobutton(self.options_menu_difficulty_frame, text='easy', value=0, variable=self.options_menu_difficulty_variable)
         self.options_menu_easy_radio_button.grid(column=0, row=0)
 
-        self.options_menu_medium_radio_button = ttk.Radiobutton(self.options_menu_difficulty_frame, text='medium', value='medium', variable=self.options_menu_difficulty_variable)
+        self.options_menu_medium_radio_button = ttk.Radiobutton(self.options_menu_difficulty_frame, text='medium', value=1, variable=self.options_menu_difficulty_variable)
         self.options_menu_medium_radio_button.grid(column=0, row=1)
 
-        self.options_menu_hard_radio_button = ttk.Radiobutton(self.options_menu_difficulty_frame, text='hard', value='hard', variable=self.options_menu_difficulty_variable)
+        self.options_menu_hard_radio_button = ttk.Radiobutton(self.options_menu_difficulty_frame, text='hard', value=2, variable=self.options_menu_difficulty_variable)
         self.options_menu_hard_radio_button.grid(column=0, row=2)
 
         self.options_menu_subjects_label = ttk.Label(self.options_menu_frame, text='Subjects')
@@ -91,12 +92,12 @@ class GUI:
     def quit(self):
         self.parent.destroy()
 
-    def create_subject_checkbuttons(self, genre):
+    def create_subject_checkbuttons(self):
         return_list = []
-        for subject_string in genre.keys():
-            temp_variable = StringVar()
-            temp_button = ttk.Checkbutton(self.options_menu_subject_check_button_frame, variable=temp_variable, text=subject_string, onvalue=subject_string, offvalue='off')
-            temp_button.var = temp_variable
+        for subject_string in self.genre.keys():
+            var = StringVar()
+            temp_button = ttk.Checkbutton(self.options_menu_subject_check_button_frame, variable=var, text=subject_string, onvalue=subject_string, offvalue='')
+            temp_button.var = var
             temp_button.pack()
             temp_button
             return_list.append(subject_string)
@@ -106,14 +107,7 @@ class GUI:
     def select_genre(self, genre):
         self.genre = genre
         self.subjects_list = []
-        if type(self.genre) == list:
-            for item in genre:
-                self.subjects_list += self.create_subject_checkbuttons(item)
-        else:
-            self.subjects_list = self.create_subject_checkbuttons(genre)
-        
-        self.options_menu_subject_check_button_list = [self.create_subject_checkbuttons]
-
+        self.subjects_list = self.create_subject_checkbuttons()
         self.quiz_select_frame.grid_forget()
         self.options_menu_frame.grid(column=0, row=0)
 
@@ -123,6 +117,7 @@ class GUI:
         self.quiz_answer_radiobutton2.grid_forget()
         self.quiz_answer_radiobutton3.grid_forget()
         self.quiz_answer_radiobutton4.grid_forget()
+        self.quiz_question_label.configure(text=question.question)
         if question.number_of_answers == 1:
             self.quiz_answer_entry.grid(column=2, row=0)
         elif question.number_of_answers >= 2:
@@ -135,11 +130,30 @@ class GUI:
                 self.quiz_answer_radiobutton3.grid(column=0, row=2)
                 self.quiz_answer_radiobutton4.grid(column=1, row=2)
 
+    def choose_question(self, subjects):
+        if self.options_menu_difficulty_variable == 1:
+            pass
 
 
     def start_quiz(self):
+        self.subjects_selected_list = []
+        all_quiz_questions = {}
+        for button in self.options_menu_subject_check_button_list:
+            if str(button.var.get()) != '':
+                self.subjects_selected_list.append(button.var.get()) # A list of all selected subjects.
+        for subject in self.subjects_selected_list:
+            startvar = int(self.options_menu_difficulty_variable.get()*self.QUESTIONS_PER_TOPIC/3)
+            endvar = int(self.options_menu_difficulty_variable.get()*self.QUESTIONS_PER_TOPIC/3+self.QUESTIONS_PER_TOPIC/3)
+            all_quiz_questions[self.genre[subject].name] = self.genre[subject].questions[startvar:endvar]
+
+        for type, questions in all_quiz_questions.items():
+            for question in questions:
+                print(type + ": " + question.question + " " + str(question.correct_answer))
+        
+        
         self.options_menu_frame.grid_forget()
-        self.quiz_entry_button_setup(self.genre['history'].questions[1])
+
+
         self.quiz_frame.grid(column=0, row=0)
 
 

@@ -1,59 +1,7 @@
-class Question:
-    def __init__(self, question, correct_answer, incorrect_answer1 = '', incorrect_answer2 = '', incorrect_answer3 = ''):
-        self.question = question # eg. 1 + 1 = | Who is the capital of Middle Earth? | What getes wetter as it dries?
-        self.correct_answer = correct_answer # eg. 2 | marvin the martian | a towel
-        self.incorrect_answer1 = incorrect_answer1 # eg. 3 | donald duck | a candle
-        self.incorrect_answer2 = incorrect_answer2 # eg. 1 | me | the human soul
-        self.incorrect_answer3 = incorrect_answer3 # eg. 90 | turn it to eleven | quicksand
-        self.number_of_answers = 0
-        self.count_answers()
-    
-    def count_answers(self):
-        if self.correct_answer != '':
-            self.number_of_answers += 1
-        if self.incorrect_answer1 != '':
-            self.number_of_answers += 1
-        if self.incorrect_answer2 != '':
-            self.number_of_answers += 1
-        if self.incorrect_answer3 != '':
-            self.number_of_answers += 1
-
-
-class Subject:
-    """Contains a subject of quiz question. Groups together the name of the subject with all the questions in that subject
-    eg. self.name = trigonometry, self.genre = maths, self.questions = [Question_object1, Question_object2]"""
-    def __init__(self, name, genre):
-        self.name = name # eg. trigonometry | history | riddles
-        self.genre = genre # eg. maths | trivia | puzzles
-        self.questions = []
-    
-    def add_quesiton(self, question, answers):
-        while len(answers) != 4:
-            answers.append('')
-        question_object = Question(question, answers[0], answers[1], answers[2], answers[3])
-        self.questions.append(question_object)
-
-
-
-def process_data(data, genre_string):
-    """Genre is the """
-    return_dictionary = {}
-    for subject_string, questions_list in data.items():
-        subject_object = Subject(subject_string, genre_string)
-        for question_items in questions_list:
-            subject_object.add_quesiton(question_items.get('question'), [question_items.get('correct_answer'), question_items.get('incorrect_answer1', ''), question_items.get('incorrect_answer2', ''), question_items.get('incorrect_answer3', '')])
-        return_dictionary[subject_string] = subject_object
-    return return_dictionary
-
-def display_data(genre_dictionary):
-    for subject_name_string, subject in genre_dictionary.items():
-        print(f"\n\n{subject_name_string.title()} \n")
-        for question in subject.questions:
-            print(f"{question.question} {question.correct_answer} {question.incorrect_answer1} {question.incorrect_answer2} {question.incorrect_answer3}")
-
 maths = {
     'arithmetic': [
         {'question': '1 + 1 =', 'correct_answer': 2},
+        {'question': '2 + 8 =', 'correct_answer': 10},
         {'question': '10 - 4 =', 'correct_answer': 6},
         {'question': '5 + 7 =', 'correct_answer': 12},
         {'question': '12 - 5 =', 'correct_answer': 7},
@@ -76,6 +24,7 @@ maths = {
     ],
     'algebra': [
         {'question': 'x + 5 = 10 | x =', 'correct_answer': 5},
+        {'question': 'x + x = 10 | x =', 'correct_answer': 5},
         {'question': 'x - 3 = 7 | x =', 'correct_answer': 10},
         {'question': '2x = 12 | x =', 'correct_answer': 6},
         {'question': 'x / 4 = 5 | x =', 'correct_answer': 20},
@@ -98,6 +47,7 @@ maths = {
     ],
     'geometry': [
         {'question': 'Sides in a triangle =', 'correct_answer': 3},
+        {'question': 'Sides in a rectangle =', 'correct_answer': 4},
         {'question': 'Interior angles of a triangle sum (degrees) =', 'correct_answer': 180},
         {'question': 'Area of a square with side 4 =', 'correct_answer': 16},
         {'question': 'Perimeter of a rectangle (length 5, width 3) =', 'correct_answer': 16},
@@ -122,6 +72,7 @@ maths = {
 trivia = {
     'history': [
         {'question': 'Who was the first President of the United States?', 'correct_answer': 'George Washington', 'incorrect_answer1': 'Thomas Jefferson'},
+        {'question': 'When was Jesus born?', 'correct_answer': 'Roughly 4-6 BC', 'incorrect_answer1': '0 AD', 'incorrect_answer2': 'Roughly 4-6 AD'},
         {'question': 'In which year did World War II end?', 'correct_answer': 1945, 'incorrect_answer1': 1944, 'incorrect_answer2': 1946, 'incorrect_answer3': 1950},
         {'question': 'The Magna Carta was signed in which century?', 'correct_answer': '13th', 'incorrect_answer1': '11th', 'incorrect_answer2': '15th'},
         {'question': 'Who was the "Sun King" of France?', 'correct_answer': 'Louis XIV', 'incorrect_answer1': 'Louis XVI'},
@@ -144,10 +95,11 @@ trivia = {
     ],
     'mythology': [
         {'question': 'Who is the Greek god of the sea?', 'correct_answer': 'Poseidon', 'incorrect_answer1': 'Zeus'},
+        {'question': 'Who is the Greek god of the moon?', 'correct_answer': 'Artemis', 'incorrect_answer1': 'Apollo', 'incorrect_answer2': 'Hera', 'incorrect_answer3': 'Luna'},
         {'question': 'In Norse mythology, what is the name of Thor\'s hammer?', 'correct_answer': 'Mjölnir', 'incorrect_answer1': 'Gungnir', 'incorrect_answer2': 'Stormbreaker', 'incorrect_answer3': 'Aegis'},
         {'question': 'Who flew too close to the sun with wings made of wax?', 'correct_answer': 'Icarus', 'incorrect_answer1': 'Daedalus', 'incorrect_answer2': 'Perseus'},
         {'question': 'Who is the Roman equivalent of the Greek goddess Aphrodite?', 'correct_answer': 'Venus', 'incorrect_answer1': 'Juno'},
-        {'question': 'Which hero pulled the sword Excalibur from a stone?', 'correct_answer': 'King Arthur', 'incorrect_answer1': 'Lancelot', 'incorrect_answer2': 'Galahad', 'incorrect_answer3': 'Merlin'},
+        {'question': 'Which hero pulled the sword Excalibur from a stone?', 'correct_answer': 'Arthur', 'incorrect_answer1': 'Lancelot', 'incorrect_answer2': 'Galahad', 'incorrect_answer3': 'Merlin'},
         {'question': 'The Sphinx sat outside which ancient Greek city?', 'correct_answer': 'Thebes', 'incorrect_answer1': 'Athens', 'incorrect_answer2': 'Sparta'},
         {'question': 'In Egyptian mythology, who is the god of the afterlife?', 'correct_answer': 'Anubis', 'incorrect_answer1': 'Ra'},
         {'question': 'Which Greek hero performed 12 labours?', 'correct_answer': 'Heracles', 'incorrect_answer1': 'Achilles', 'incorrect_answer2': 'Odysseus', 'incorrect_answer3': 'Jason'},
@@ -166,6 +118,7 @@ trivia = {
     ],
     'internet': [
         {'question': 'What does "WWW" stand for?', 'correct_answer': 'World Wide Web', 'incorrect_answer1': 'Web World Wide'},
+        {'question': 'What is the most popular multiplayer game ever?', 'correct_answer': 'Minecraft', 'incorrect_answer1': 'Rise of Kingdoms', 'incorrect_answer2': 'Roblox', 'incorrect_answer3': 'Among Us'},
         {'question': 'Which social media platform is known for its 280-character limit?', 'correct_answer': 'Twitter/X', 'incorrect_answer1': 'Facebook', 'incorrect_answer2': 'Instagram', 'incorrect_answer3': 'Reddit'},
         {'question': 'In what year was the first YouTube video uploaded?', 'correct_answer': 2005, 'incorrect_answer1': 2003, 'incorrect_answer2': 2007},
         {'question': 'What is the most popular search engine in the world?', 'correct_answer': 'Google', 'incorrect_answer1': 'Bing'},
@@ -188,6 +141,7 @@ trivia = {
     ],
     'geography': [
         {'question': 'What is the largest country in the world by land area?', 'correct_answer': 'Russia', 'incorrect_answer1': 'Canada'},
+        {'question': 'Which country is the best?', 'correct_answer': 'Australia', 'incorrect_answer1': 'New Zealand'},
         {'question': 'Which ocean is the largest?', 'correct_answer': 'Pacific', 'incorrect_answer1': 'Atlantic', 'incorrect_answer2': 'Indian', 'incorrect_answer3': 'Arctic'},
         {'question': 'What is the capital of France?', 'correct_answer': 'Paris', 'incorrect_answer1': 'Lyon', 'incorrect_answer2': 'Marseille'},
         {'question': 'Which continent is the Sahara Desert located on?', 'correct_answer': 'Africa', 'incorrect_answer1': 'Asia'},
@@ -212,6 +166,7 @@ trivia = {
 puzzles = {
         'riddles': [
             {'question': 'I speak without a mouth... What am I?', 'correct_answer': 'An echo', 'incorrect_answer1': 'A whistle'},
+            {'question': 'What kind of cups do not hold water?', 'correct_answer': 'Broken Mugs', 'incorrect_answer1': 'A Cupcake'},
             {'question': 'The more of this there is, the less you see. What is it?', 'correct_answer': 'Darkness', 'incorrect_answer1': 'Fog', 'incorrect_answer2': 'Light', 'incorrect_answer3': 'Smoke'},
             {'question': 'What has keys but can\'t open locks?', 'correct_answer': 'A piano', 'incorrect_answer1': 'A map', 'incorrect_answer2': 'A computer'},
             {'question': 'What has to be broken before you can use it?', 'correct_answer': 'An egg', 'incorrect_answer1': 'A promise'},
@@ -234,6 +189,7 @@ puzzles = {
         ],
         'anagrams': [
             {'question': 'Anagram of "Listen":', 'correct_answer': 'Silent', 'incorrect_answer1': 'Inlets'},
+            {'question': 'Anagram of "Evil":', 'correct_answer': 'Vile', 'incorrect_answer1': 'Vi|e'},
             {'question': 'Anagram of "Dormitory":', 'correct_answer': 'Dirty Room', 'incorrect_answer1': 'Roomy Dirt', 'incorrect_answer2': 'Tory Dorm', 'incorrect_answer3': 'Mirror Dot'},
             {'question': 'Anagram of "The Eyes":', 'correct_answer': 'They See', 'incorrect_answer1': 'Eye Thes', 'incorrect_answer2': 'Thee Yes'},
             {'question': 'Anagram of "Schoolmaster":', 'correct_answer': 'The Classroom', 'incorrect_answer1': 'Master Schools'},
@@ -256,6 +212,7 @@ puzzles = {
         ],
         'fill in the blank': [
             {'question': 'Better late than _______.', 'correct_answer': 'Never', 'incorrect_answer1': 'Early'},
+            {'question': 'You ______!', 'correct_answer': 'Egg', 'incorrect_answer1': 'Pleasant Person'},
             {'question': 'A picture is worth a thousand _______.', 'correct_answer': 'Words', 'incorrect_answer1': 'Pixels', 'incorrect_answer2': 'Dollars', 'incorrect_answer3': 'Frames'},
             {'question': 'The early bird catches the _______.', 'correct_answer': 'Worm', 'incorrect_answer1': 'Seed', 'incorrect_answer2': 'Fly'},
             {'question': 'Actions speak louder than _______.', 'correct_answer': 'Words', 'incorrect_answer1': 'Shouts'},
@@ -277,6 +234,3 @@ puzzles = {
             {'question': 'Still waters run _______.', 'correct_answer': 'Deep', 'incorrect_answer1': 'Fast', 'incorrect_answer2': 'Cold', 'incorrect_answer3': 'Quietly'}
         ]
     }
-maths_data = process_data(maths, 'maths')
-trivia_data = process_data(trivia, 'trivia')
-puzzle_data = process_data(puzzles, 'puzzles')
