@@ -8,6 +8,9 @@ class Question:
         self.incorrect_answer2 = incorrect_answer2 # eg. 1 | me | the human soul
         self.incorrect_answer3 = incorrect_answer3 # eg. 90 | turn it to eleven | quicksand
         self.all_answers = [correct_answer, incorrect_answer1, incorrect_answer2, incorrect_answer3]
+        self.trim()
+    
+    def trim(self):    
         while '' in self.all_answers:
             self.all_answers.remove('')
 

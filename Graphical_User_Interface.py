@@ -3,114 +3,184 @@ from tkinter import messagebox
 from tkinter import ttk
 from Data_process import *
 from random import *
+from pathlib import Path
 
 
 class GUI:
     def __init__(self, parent):
+        self.button_colours = ["#DFDFDF", "#c1c0c0", "#eaeaea", "#d4d2d2"]
+        self.background_colours = ['white', 'grey']
+        self.MATHS_BACKGROUND_COLOURS = ["#a7c0e5", "#5A6370"]
+        self.TRIVIA_BACKGROUND_COLOURS = ['#afdead', "#647664"]
+        self.PUZZLES_BACKGROUND_COLOURS = ["#deadb2", "#5b4f50"]
+        self.CUSTOM_BACKGROUND_COLOURS = ["#ebeab3", "#717161"]
+        self.path = Path(__file__).parent
+        self.photo_path = self.path / 'image_files' / 'quiz_logo.gif'
         self.QUESTIONS_PER_TOPIC = 21
+        self.questions_left = self.QUESTIONS_PER_TOPIC//3
         self.parent = parent
         self.genre = ''
         self.subjects_list = ''
 
-        gui_style = ttk.Style()
-        gui_style.theme_use('clam')
+        self.gui_style = ttk.Style()
+        self.gui_style.theme_use('clam')
 
-        gui_style.configure("S.TFrame", background="Red")
-        self.start_menu_frame = ttk.Frame(parent, style="S.TFrame")
+        self.gui_style.configure("quiz_colour.TFrame", background=self.background_colours[0])
+        self.start_menu_frame = ttk.Frame(parent, style="quiz_colour.TFrame")
         self.start_menu_frame.columnconfigure(0, weight=1)
+        self.start_menu_frame.columnconfigure(1, weight=1)
         self.start_menu_frame.rowconfigure(0, weight=1)
         self.start_menu_frame.rowconfigure(1, weight=1)
         self.start_menu_frame.grid(column=0, row=0, sticky=NSEW)
 
-        gui_style.configure("start_menu_start_button.TButton")
+        self.start_menu_image = PhotoImage(file=self.photo_path)
+        self.gui_style.configure("start_menu_image_label.TLabel", borderwidth = 0)
+        self.start_menu_image_label = ttk.Label(self.start_menu_frame, image=self.start_menu_image, style="start_menu_image_label.TLabel")
+        self.start_menu_image_label.grid(column=0, row=0, rowspan=2)
+
+        self.gui_style.configure("start_menu_start_button.TButton")
         self.start_menu_start_button = ttk.Button(self.start_menu_frame, text='Start', command=self.start, style="start_menu_start_button.TButton")
-        self.start_menu_start_button.grid(column=0, row=0, sticky='SEW', padx=20, pady=10, ipadx=10, ipady=10)
+        self.start_menu_start_button.grid(column=1, row=0, sticky='SEW', padx=(10, 50), pady=10, ipadx=10, ipady=10)
 
         self.start_menu_quit_button = ttk.Button(self.start_menu_frame, text='quit', command=self.quit)
-        self.start_menu_quit_button.grid(column=0, row=1, sticky='NEW', padx=20, pady=10, ipadx=10, ipady=10)
+        self.start_menu_quit_button.grid(column=1, row=1, sticky='NEW', padx=(10, 50), pady=10, ipadx=10, ipady=10)
 
-        self.quiz_select_frame = ttk.Frame(parent)
+        self.quiz_select_frame = ttk.Frame(parent, style="quiz_colour.TFrame")
         self.quiz_select_frame.columnconfigure(0, weight=1)
+        self.quiz_select_frame.columnconfigure(1, weight=1)
         self.quiz_select_frame.rowconfigure(0, weight=1)
         self.quiz_select_frame.rowconfigure(1, weight=1)
+        self.quiz_select_frame.rowconfigure(2, weight=1)
         #self.quiz_select_frame.grid(column=0, row=0, sticky=NSEW)
 
-        self.quiz_select_title_label = ttk.Label(self.quiz_select_frame, text='Choose your topic:')
-        self.quiz_select_title_label.grid(column=0, row=0, columnspan=2)
+        self.gui_style.configure("quiz_select_title_label.TLabel", font=('Arial', 50), background='white')
+        self.quiz_select_title_label = ttk.Label(self.quiz_select_frame, text='Choose your topic:', style="quiz_select_title_label.TLabel")
+        self.quiz_select_title_label.grid(column=0, row=0, columnspan=2, pady=30)
 
-        self.quiz_select_maths_button = ttk.Button(self.quiz_select_frame, text='Maths', command=lambda: self.select_genre(maths_data))
-        self.quiz_select_maths_button.grid(column=0, row=1)
+        self.gui_style.configure('quiz_select_maths_button.TButton', font=('Arial', 30))
+        self.gui_style.map("quiz_select_maths_button.TButton", background=[('!active', self.MATHS_BACKGROUND_COLOURS[0],), ('active', self.MATHS_BACKGROUND_COLOURS[1])])
+        self.quiz_select_maths_button = ttk.Button(self.quiz_select_frame, text='Maths', command=lambda: self.select_genre(maths_data, self.MATHS_BACKGROUND_COLOURS), style="quiz_select_maths_button.TButton")
+        self.quiz_select_maths_button.grid(column=0, row=1, sticky='sew', ipadx=10, ipady=50, padx=(20, 5), pady=5)
 
-        self.quiz_select_trivia_button = ttk.Button(self.quiz_select_frame, text='Trivia', command=lambda: self.select_genre(trivia_data))
-        self.quiz_select_trivia_button.grid(column=1, row=1)
+        self.gui_style.configure('quiz_select_trivia_button.TButton', font=('Arial', 30))
+        self.gui_style.map("quiz_select_trivia_button.TButton", background=[('!active', self.TRIVIA_BACKGROUND_COLOURS[0],), ('active', self.TRIVIA_BACKGROUND_COLOURS[1])])
+        self.quiz_select_trivia_button = ttk.Button(self.quiz_select_frame, text='Trivia', command=lambda: self.select_genre(trivia_data, self.TRIVIA_BACKGROUND_COLOURS), style="quiz_select_trivia_button.TButton")
+        self.quiz_select_trivia_button.grid(column=1, row=1, sticky='sew', ipadx=10, ipady=50, padx=(5, 20), pady=5)
 
-        self.quiz_select_puzzles_button = ttk.Button(self.quiz_select_frame, text='Puzzles', command=lambda: self.select_genre(puzzle_data))
-        self.quiz_select_puzzles_button.grid(column=0, row=2)
+        self.gui_style.configure("quiz_select_puzzles_button.TButton", font=('Arial', 30))
+        self.gui_style.map("quiz_select_puzzles_button.TButton", background=[('!active', self.PUZZLES_BACKGROUND_COLOURS[0],), ('active', self.PUZZLES_BACKGROUND_COLOURS[1])])
+        self.quiz_select_puzzles_button = ttk.Button(self.quiz_select_frame, text='Puzzles', command=lambda: self.select_genre(puzzle_data, self.PUZZLES_BACKGROUND_COLOURS), style="quiz_select_puzzles_button.TButton")
+        self.quiz_select_puzzles_button.grid(column=0, row=2, sticky='new', ipadx=10, ipady=50, padx=(20, 5), pady=5)
 
-        self.quiz_select_custom_button = ttk.Button(self.quiz_select_frame, text='Custom', command=lambda: self.select_genre(all_data))
-        self.quiz_select_custom_button.grid(column=1, row=2)
+        self.gui_style.configure("quiz_select_custom_button.TButton", font=('Arial', 30))
+        self.gui_style.map("quiz_select_custom_button.TButton", background=[('!active', self.CUSTOM_BACKGROUND_COLOURS[0],), ('active', self.CUSTOM_BACKGROUND_COLOURS[1])])
+        self.quiz_select_custom_button = ttk.Button(self.quiz_select_frame, text='Custom', command=lambda: self.select_genre(all_data, self.CUSTOM_BACKGROUND_COLOURS), style="quiz_select_custom_button.TButton")
+        self.quiz_select_custom_button.grid(column=1, row=2, sticky='new', ipadx=10, ipady=50, padx=(5, 20), pady=5)
 
-        self.options_menu_frame = ttk.Frame(parent)
+        self.options_menu_frame = ttk.Frame(parent, style='quiz_colour.TFrame')
+        self.options_menu_frame.columnconfigure(0, weight=1)
+        self.options_menu_frame.columnconfigure(1, weight=1)
+        self.options_menu_frame.rowconfigure(0, weight=1)
+        self.options_menu_frame.rowconfigure(1, weight=1)
+        self.options_menu_frame.rowconfigure(2, weight=2)
+
         #self.options_menu_frame.grid(column=0, row=0)
-
-        self.options_menu_difficulty_label = ttk.Label(self.options_menu_frame, text='Choose your Difficulty: ')
+        
+        self.gui_style.configure('options_menu_labels.TLabel', background='white', font=('Arial', 30))
+        self.options_menu_difficulty_label = ttk.Label(self.options_menu_frame, text='Choose your Difficulty: ', style='options_menu_labels.TLabel')
         self.options_menu_difficulty_label.grid(column=0,row=0)
 
-        self.options_menu_difficulty_frame = ttk.Frame(self.options_menu_frame)
+        self.options_menu_difficulty_frame = ttk.Frame(self.options_menu_frame, style='quiz_colour.TFrame')
+        self.options_menu_difficulty_frame.columnconfigure(0, weight=1)
         self.options_menu_difficulty_frame.grid(column=0, row=1)
 
+        self.gui_style.configure('difficulty_radio_buttons.TRadiobutton', background='white', relief=FLAT, anchor='center', font=('Arial', 30))
+        self.gui_style.layout('difficulty_radio_buttons.TRadiobutton', [('Radiobutton.border', {'sticky': 'nsew', 'children': [('Radiobutton.focus', {'sticky': 'nsew', 'children': [('Radiobutton.label', {'sticky': 'nsew'})]})], 'sticky': 'nsew'})])
+        self.gui_style.map('difficulty_radio_buttons.TRadiobutton', background=[('active selected', self.button_colours[3]), ('active', self.button_colours[2]), ('selected', self.button_colours[1]), ('!selected', self.button_colours[0])], relief=[('selected', 'sunken'), ('!selected', 'raised')])
         self.options_menu_difficulty_variable = IntVar()
-        self.options_menu_easy_radio_button = ttk.Radiobutton(self.options_menu_difficulty_frame, text='easy', value=0, variable=self.options_menu_difficulty_variable)
-        self.options_menu_easy_radio_button.grid(column=0, row=0)
+        self.options_menu_difficulty_variable.set(-1)
+        self.options_menu_easy_radio_button = ttk.Radiobutton(self.options_menu_difficulty_frame, text='Easy', value=0, variable=self.options_menu_difficulty_variable, style='difficulty_radio_buttons.TRadiobutton')
+        self.options_menu_easy_radio_button.grid(column=0, row=0, padx=10, pady=10, ipadx=50, ipady=10, sticky='nsew')
 
-        self.options_menu_medium_radio_button = ttk.Radiobutton(self.options_menu_difficulty_frame, text='medium', value=1, variable=self.options_menu_difficulty_variable)
-        self.options_menu_medium_radio_button.grid(column=0, row=1)
+        self.options_menu_medium_radio_button = ttk.Radiobutton(self.options_menu_difficulty_frame, text='Medium', value=1, variable=self.options_menu_difficulty_variable, style='difficulty_radio_buttons.TRadiobutton')
+        self.options_menu_medium_radio_button.grid(column=0, row=1, padx=10, pady=10, ipadx=50, ipady=10, sticky='nsew')
 
-        self.options_menu_hard_radio_button = ttk.Radiobutton(self.options_menu_difficulty_frame, text='hard', value=2, variable=self.options_menu_difficulty_variable)
-        self.options_menu_hard_radio_button.grid(column=0, row=2)
+        self.options_menu_hard_radio_button = ttk.Radiobutton(self.options_menu_difficulty_frame, text='Hard', value=2, variable=self.options_menu_difficulty_variable, style='difficulty_radio_buttons.TRadiobutton')
+        self.options_menu_hard_radio_button.grid(column=0, row=2, padx=10, pady=10, ipadx=50, ipady=10, sticky='nsew')
 
-        self.options_menu_subjects_label = ttk.Label(self.options_menu_frame, text='Choose your subjects: ')
+        
+        self.options_menu_subjects_label = ttk.Label(self.options_menu_frame, text='Choose your subjects: ', style='options_menu_labels.TLabel')
         self.options_menu_subjects_label.grid(column=1, row=0)
         
         self.options_menu_subject_check_button_list = []
 
-        self.options_menu_subject_check_button_frame = ttk.Frame(self.options_menu_frame)
-        self.options_menu_subject_check_button_frame.grid(column=1, row=1)
+        self.options_menu_subject_check_button_frame = ttk.Frame(self.options_menu_frame, style="quiz_colour.TFrame")
+        self.options_menu_subject_check_button_frame.grid(column=1, row=1, ipadx=20, ipady=20)
 
         self.options_menu_start_button = ttk.Button(self.options_menu_frame, text='Start', command=self.start_quiz)
-        self.options_menu_start_button.grid(column=0, row=4, columnspan=2)
+        self.options_menu_start_button.grid(column=0, row=2, columnspan=2)
 
-        self.question_pick_frame = ttk.Frame(parent)
-
-        self.question_pick_title_label = ttk.Label(self.question_pick_frame, text="Select Your Next Question's Topic: ")
+        self.question_pick_frame = ttk.Frame(parent, style='quiz_colour.TFrame')
+        self.question_pick_frame.columnconfigure(0, weight=1)
+        self.question_pick_frame.columnconfigure(1, weight=1)
+        self.question_pick_frame.rowconfigure(0, weight=1)
+        self.question_pick_frame.rowconfigure(1, weight=1)
+        self.question_pick_frame.rowconfigure(2, weight=1)
+    
+        self.gui_style.configure('question_pick_title_label.TLabel', font=('Arial', 30))
+        self.question_pick_title_label = ttk.Label(self.question_pick_frame, text="Select Your Next Question's Topic: ", style='question_pick_title_label.TLabel')
         self.question_pick_title_label.grid(column=0, row=0, columnspan=2)
         
-        self.questions_pick_button1 = ttk.Button(self.question_pick_frame)
-        self.questions_pick_button2 = ttk.Button(self.question_pick_frame)
-        self.questions_pick_button3 = ttk.Button(self.question_pick_frame)
-        self.questions_pick_button4 = ttk.Button(self.question_pick_frame)
+        self.gui_style.configure('questions_pick_button.TButton', font=('Arial', 20))
+        self.questions_pick_button1 = ttk.Button(self.question_pick_frame, style='questions_pick_button.TButton')
+        self.questions_pick_button2 = ttk.Button(self.question_pick_frame, style='questions_pick_button.TButton')
+        self.questions_pick_button3 = ttk.Button(self.question_pick_frame, style='questions_pick_button.TButton')
+        self.questions_pick_button4 = ttk.Button(self.question_pick_frame, style='questions_pick_button.TButton')
 
 
 
-        self.quiz_frame = ttk.Frame(parent)
+        self.quiz_frame = ttk.Frame(parent, style="quiz_colour.TFrame")
+        self.quiz_frame.columnconfigure(0, weight=1)
+        self.quiz_frame.columnconfigure(1, weight=1)
+        self.quiz_frame.rowconfigure(0, weight=1)
+        self.quiz_frame.rowconfigure(1, weight=1)
+        self.quiz_frame.rowconfigure(2, weight=1)
+        self.quiz_frame.rowconfigure(3, weight=1)
+        self.quiz_frame.rowconfigure(4, weight=1)
+        
         # self.quiz_frame.grid(column=0, row=0)
 
-        self.quiz_question_label = ttk.Label(self.quiz_frame, text='test')
-        self.quiz_question_label.grid(column=0, row=0, columnspan=2)
+        self.gui_style.configure('quiz_question_label.TLabel', background=self.background_colours[0], font=('Arial', 20), relief='raised')
+        self.quiz_question_label = ttk.Label(self.quiz_frame, text='', style='quiz_question_label.TLabel', anchor=CENTER)
+        self.quiz_question_label.grid(column=0, row=0, columnspan=2, sticky=NSEW, ipadx=20, ipady=20, padx=20, pady=20)
 
         self.quiz_answer_variable = StringVar()
-        self.quiz_answer_entry = ttk.Entry(self.quiz_frame)
+        self.quiz_answer_entry = ttk.Entry(self.quiz_frame, textvariable=self.quiz_answer_variable)
         
-        self.quiz_answer_radiobutton1 = ttk.Radiobutton(self.quiz_frame, variable=self.quiz_answer_variable)
-        self.quiz_answer_radiobutton2 = ttk.Radiobutton(self.quiz_frame, variable=self.quiz_answer_variable)
-        self.quiz_answer_radiobutton3 = ttk.Radiobutton(self.quiz_frame, variable=self.quiz_answer_variable)
-        self.quiz_answer_radiobutton4 = ttk.Radiobutton(self.quiz_frame, variable=self.quiz_answer_variable)
+        self.gui_style.configure('quiz_answer_radiobutton.TRadiobutton', background='white', font=('Arial', 20), anchor=CENTER)
+        self.gui_style.layout('quiz_answer_radiobutton.TRadiobutton', [('Radiobutton.border', {'sticky': 'nsew', 'children': [('Radiobutton.focus', {'sticky': 'nsew', 'children': [('Radiobutton.label', {'sticky': 'nsew'})]})], 'sticky': 'nsew'})])
+        self.gui_style.map('quiz_answer_radiobutton.TRadiobutton', background=[('active selected', self.button_colours[3]), ('active', self.button_colours[2]), ('!selected', self.button_colours[0]), ('selected', self.button_colours[1])], relief=[('!selected', 'raised'), ('selected', 'sunken')])
+        self.quiz_answer_radiobutton1 = ttk.Radiobutton(self.quiz_frame, variable=self.quiz_answer_variable, style='quiz_answer_radiobutton.TRadiobutton')
+        self.quiz_answer_radiobutton2 = ttk.Radiobutton(self.quiz_frame, variable=self.quiz_answer_variable, style='quiz_answer_radiobutton.TRadiobutton')
+        self.quiz_answer_radiobutton3 = ttk.Radiobutton(self.quiz_frame, variable=self.quiz_answer_variable, style='quiz_answer_radiobutton.TRadiobutton')
+        self.quiz_answer_radiobutton4 = ttk.Radiobutton(self.quiz_frame, variable=self.quiz_answer_variable, style='quiz_answer_radiobutton.TRadiobutton')
 
         self.quiz_check_answer_button = ttk.Button(self.quiz_frame, text='Check', command=self.check_answer)
         self.quiz_check_answer_button.grid(column=0, row=3)
         
         self.quiz_next_button = ttk.Button(self.quiz_frame, text='Next >', state=DISABLED, command=self.choose_question)
         self.quiz_next_button.grid(column=1, row=3)
+
+        self.gui_style.configure('quiz_correct_incorrect_label.TLabel', background=self.background_colours)
+        self.quiz_correct_incorrect_label = ttk.Label(self.quiz_frame, text='', style='quiz_correct_incorrect_label.TLabel')
+        self.quiz_correct_incorrect_label.grid(column=0, row=4, columnspan=2)
+
+        self.end_frame = ttk.Frame(parent, style='quiz_colour.TFrame')
+
+        self.gui_style.configure('end_title_label.TLabel', font=('Arial', 30))
+        self.end_title_label = ttk.Label(self.end_frame, text='Quiz Complete', style='end_title_label.TLabel')
+
+        
 
     def start(self):
         self.start_menu_frame.grid_forget()
@@ -121,21 +191,35 @@ class GUI:
 
     def create_subject_checkbuttons(self):
         return_list = []
-        for subject_string in self.genre.keys():
+        self.gui_style.configure('temp_button.TCheckbutton', background=self.background_colours[0])
+        for i, subject_string in enumerate(self.genre.keys()):
             var = StringVar()
-            temp_button = ttk.Checkbutton(self.options_menu_subject_check_button_frame, variable=var, text=subject_string, onvalue=subject_string, offvalue='')
+            size = 100//(i//2+3)
+            if size > 25:
+                size = 25
+            elif size < 10:
+                size = 10
+            self.gui_style.configure('temp_button.TCheckbutton', font=('Arial', size))
+            temp_button = ttk.Checkbutton(self.options_menu_subject_check_button_frame, variable=var, text=subject_string, onvalue=subject_string, offvalue='', style='temp_button.TCheckbutton')
             temp_button.var = var
-            temp_button.pack()
+            temp_button.pack(padx=size//5, pady=size//5, ipadx=size//10, ipady=2, anchor='w')
             temp_button
             return_list.append(subject_string)
             self.options_menu_subject_check_button_list.append(temp_button)
+            self.options_menu_subject_check_button_frame.rowconfigure(i, weight=1)
         return return_list
 
-    def select_genre(self, genre):
+    def select_genre(self, genre, colour):
+        self.background_colours = colour
+        self.gui_style.configure('quiz_colour.TFrame', background=colour[0])
+        self.gui_style.configure('options_menu_labels.TLabel', background=colour[0])
+        self.gui_style.configure('question_pick_title_label.TLabel', background=colour[0])
+        self.options_menu_frame.configure(style='quiz_colour.TFrame')
         self.genre = genre
         self.subjects_list = []
         self.subjects_list = self.create_subject_checkbuttons()
         self.quiz_select_frame.grid_forget()
+        self.options_menu_frame.configure()
         self.options_menu_frame.grid(column=0, row=0, sticky=NSEW)
 
     def quiz_entry_button_setup(self, question):
@@ -148,50 +232,62 @@ class GUI:
         self.quiz_answer_radiobutton4.grid_forget()
         self.quiz_question_label.configure(text=question.question)
         if len(question.all_answers) == 1:
-            self.quiz_answer_entry.grid(column=2, row=0)
+            self.quiz_answer_entry.configure(state=NORMAL)
+            self.quiz_answer_entry.delete(0, END)
+            self.quiz_answer_entry.focus()
+            self.quiz_answer_entry.grid(column=0, row=1, ipadx=100, columnspan=2)
         elif len(question.all_answers) >= 2:
             self.quiz_answer_radiobutton1.configure(text=answers[0], value=answers[0], state=NORMAL)
             self.quiz_answer_radiobutton2.configure(text=answers[1], value=answers[1], state=NORMAL)
-            self.quiz_answer_radiobutton1.grid(column=0, row=1)
-            self.quiz_answer_radiobutton2.grid(column=1, row=1)
+            self.quiz_answer_radiobutton1.grid(column=0, row=1, sticky='sew', ipadx=10, ipady=10, padx=(20, 5), pady=5)
+            self.quiz_answer_radiobutton2.grid(column=1, row=1, sticky='sew', ipadx=10, ipady=10, padx=(5, 20), pady=5)
             if len(question.all_answers) == 3:
                 self.quiz_answer_radiobutton3.configure(text=answers[2], value=answers[2], state=NORMAL)
-                self.quiz_answer_radiobutton3.grid(column=0, row=2, columnspan=2)
+                self.quiz_answer_radiobutton3.grid(column=0, row=2, columnspan=2, sticky='new', ipadx=10, ipady=10, padx=20, pady=5)
             elif len(question.all_answers) == 4:
                 self.quiz_answer_radiobutton3.configure(text=answers[2], value=answers[2], state=NORMAL)
                 self.quiz_answer_radiobutton4.configure(text=answers[3], value=answers[3], state=NORMAL)
-                self.quiz_answer_radiobutton3.grid(column=0, row=2)
-                self.quiz_answer_radiobutton4.grid(column=1, row=2)
+                self.quiz_answer_radiobutton3.grid(column=0, row=2, sticky='new', ipadx=10, ipady=10, padx=(20, 5), pady=5)
+                self.quiz_answer_radiobutton4.grid(column=1, row=2, sticky='new', ipadx=10, ipady=10, padx=(5, 20), pady=5)
 
     def begin_question(self, subject):
+        self.gui_style.configure('quiz_correct_incorrect_label.TLabel', background=self.background_colours[0])
+        self.quiz_correct_incorrect_label.configure(text='')
         self.question_pick_frame.grid_forget()
         self.quiz_check_answer_button.configure(state=NORMAL)
         self.quiz_next_button.configure(state=DISABLED)
         self.currect_question = self.all_quiz_questions[subject].pop(randrange(len(self.all_quiz_questions[subject])))
         self.quiz_entry_button_setup(self.currect_question)
-        self.quiz_frame.grid(column=0, row=0)   
+        self.quiz_frame.grid(column=0, row=0, sticky='nsew')   
 
     def choose_question(self):
         self.quiz_frame.grid_forget()
+        self.questions_left -= 1
+        if self.questions_left == 0:
+            self.gui_style.configure('end_title_label.TLabel')
+            self.end_frame.grid(column=0, row=0, sticky='nsew')
+            return
+
+        
         if len(self.all_quiz_questions.keys()) >= 4:
             subjects = sample(list(self.all_quiz_questions.keys()), 4)
-            self.questions_pick_button3.configure(text=subjects[2], command=lambda: self.begin_question(subjects[2]), state=NORMAL)
-            self.questions_pick_button4.configure(text=subjects[3], command=lambda: self.begin_question(subjects[3]), state=NORMAL)
-            self.questions_pick_button3.grid(column=0, row=2)
-            self.questions_pick_button4.grid(column=1, row=2)
+            self.questions_pick_button3.configure(text=subjects[2].title(), command=lambda: self.begin_question(subjects[2]), state=NORMAL)
+            self.questions_pick_button4.configure(text=subjects[3].title(), command=lambda: self.begin_question(subjects[3]), state=NORMAL)
+            self.questions_pick_button3.grid(column=0, row=2, ipadx=10, ipady=50, sticky='new', padx=(20, 5), pady=5)
+            self.questions_pick_button4.grid(column=1, row=2, ipadx=10, ipady=50, sticky='new', padx=(5, 20), pady=5)
         else:
             subjects = list(self.all_quiz_questions.keys())
         if len(self.all_quiz_questions.keys()) == 1:
             self.begin_question(subjects[0])
         elif len(self.all_quiz_questions.keys()) >= 2:
-            self.questions_pick_button1.configure(text=subjects[0], command=lambda: self.begin_question(subjects[0]), state=NORMAL)
-            self.questions_pick_button2.configure(text=subjects[1], command=lambda: self.begin_question(subjects[1]), state=NORMAL)
-            self.questions_pick_button1.grid(column=0, row=1)
-            self.questions_pick_button2.grid(column=1, row=1)
+            self.questions_pick_button1.configure(text=subjects[0].title(), command=lambda: self.begin_question(subjects[0]), state=NORMAL)
+            self.questions_pick_button2.configure(text=subjects[1].title(), command=lambda: self.begin_question(subjects[1]), state=NORMAL)
+            self.questions_pick_button1.grid(column=0, row=1, ipadx=10, ipady=50, sticky='sew', padx=(20, 5), pady=5)
+            self.questions_pick_button2.grid(column=1, row=1, ipadx=10, ipady=50, sticky='sew', padx=(5, 20), pady=5)
         if len(self.all_quiz_questions.keys()) == 3:
-            self.questions_pick_button3.configure(text=subjects[2], command=lambda: self.begin_question(subjects[2]), state=NORMAL)
-            self.questions_pick_button3.grid(column=0, row=2, columnspan=2)
-        self.question_pick_frame.grid(column=0, row=0)
+            self.questions_pick_button3.configure(text=subjects[2].title(), command=lambda: self.begin_question(subjects[2]), state=NORMAL)
+            self.questions_pick_button3.grid(column=0, row=2, columnspan=2, ipadx=10, ipady=50, sticky='new', padx=(20, 20), pady=5)
+        self.question_pick_frame.grid(column=0, row=0, sticky=NSEW)
 
     def start_quiz(self):
         self.subjects_selected_list = []
@@ -199,18 +295,34 @@ class GUI:
         for button in self.options_menu_subject_check_button_list:
             if str(button.var.get()) != '':
                 self.subjects_selected_list.append(button.var.get()) # A list of all selected subjects.
-        for subject in self.subjects_selected_list:
-            startvar = int(self.options_menu_difficulty_variable.get()*self.QUESTIONS_PER_TOPIC/3) # gets the first value in the subject list of questions to pull from
-            endvar = int(self.options_menu_difficulty_variable.get()*self.QUESTIONS_PER_TOPIC/3+self.QUESTIONS_PER_TOPIC/3) # gets the last ^^^
-            self.all_quiz_questions[self.genre[subject].name] = self.genre[subject].questions[startvar:endvar] 
-        self.options_menu_frame.grid_forget()
-        self.choose_question()
+        if len(self.subjects_selected_list) == 0:
+            messagebox.showwarning('Invalid Input', 'Please select one or more subjects')
+            self.options_menu_subject_check_button_list[0].focus()
+        elif self.options_menu_difficulty_variable.get() == -1:
+            messagebox.showwarning('Invalid Input', 'Please select difficulty')
+        else:
+            for subject in self.subjects_selected_list:
+                startvar = int(self.options_menu_difficulty_variable.get()*self.QUESTIONS_PER_TOPIC/3) # gets the first value in the subject list of questions to pull from
+                endvar = int(self.options_menu_difficulty_variable.get()*self.QUESTIONS_PER_TOPIC/3+self.QUESTIONS_PER_TOPIC/3) # gets the last ^^^
+                self.all_quiz_questions[self.genre[subject].name] = self.genre[subject].questions[startvar:endvar] 
+            self.options_menu_frame.grid_forget()
+            self.choose_question()
 
     def check_answer(self):
-        if self.quiz_answer_variable == self.currect_question:
-            pass
+        if self.currect_question.incorrect_answer1 == '': # A single answer question will always be a maths question
+            try:
+                float(self.quiz_answer_variable.get())
+            except:
+                messagebox.showwarning('Invalid Input', 'Please enter a number')
+                self.quiz_answer_entry.delete(0, END)
+                self.quiz_answer_entry.focus()
+                return
+        if self.quiz_answer_variable.get() == str(self.currect_question.correct_answer):
+            self.gui_style.configure('quiz_correct_incorrect_label.TLabel', background="#70f456")
+            self.quiz_correct_incorrect_label.configure(text='Correct!')
         else:
-            pass
+            self.gui_style.configure('quiz_correct_incorrect_label.TLabel', background="#f45656")
+            self.quiz_correct_incorrect_label.configure(text=f'Inncorrect! The correct answer is {self.currect_question.correct_answer}')
         self.quiz_check_answer_button.configure(state=DISABLED)
         self.quiz_answer_entry.configure(state=DISABLED)
         self.quiz_answer_radiobutton1.configure(state=DISABLED)
