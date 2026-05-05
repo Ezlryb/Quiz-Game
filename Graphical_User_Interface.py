@@ -53,7 +53,7 @@ class GUI:
         self.start_menu_start_button = ttk.Button(self.start_menu_frame, text='Start', command=self.start, style="start_menu_start_button.TButton")
         self.start_menu_start_button.grid(column=1, row=0, sticky='SEW', padx=(10, 50), pady=10, ipadx=10, ipady=10)
 
-        self.start_menu_quit_button = ttk.Button(self.start_menu_frame, text='quit', command=self.quit)
+        self.start_menu_quit_button = ttk.Button(self.start_menu_frame, text='Quit', command=self.quit)
         self.start_menu_quit_button.grid(column=1, row=1, sticky='NEW', padx=(10, 50), pady=10, ipadx=10, ipady=10)
 
         self.quiz_select_frame = ttk.Frame(parent, style="quiz_colour.TFrame")
@@ -65,7 +65,7 @@ class GUI:
         #self.quiz_select_frame.grid(column=0, row=0, sticky=NSEW)
 
         self.gui_style.configure("quiz_select_title_label.TLabel", font=('Arial', 50), background='white')
-        self.quiz_select_title_label = ttk.Label(self.quiz_select_frame, text='Choose your topic:', style="quiz_select_title_label.TLabel")
+        self.quiz_select_title_label = ttk.Label(self.quiz_select_frame, text='Choose Your topic:', style="quiz_select_title_label.TLabel")
         self.quiz_select_title_label.grid(column=0, row=0, columnspan=2, pady=30)
 
         self.gui_style.configure('quiz_select_maths_button.TButton', font=('Arial', 30))
@@ -96,7 +96,7 @@ class GUI:
         self.options_menu_frame.rowconfigure(2, weight=2)
         
         self.gui_style.configure('options_menu_labels.TLabel', background='white', font=('Arial', 30))
-        self.options_menu_difficulty_label = ttk.Label(self.options_menu_frame, text='Choose your Difficulty: ', style='options_menu_labels.TLabel')
+        self.options_menu_difficulty_label = ttk.Label(self.options_menu_frame, text='Choose Your Difficulty: ', style='options_menu_labels.TLabel')
         self.options_menu_difficulty_label.grid(column=0,row=0)
 
         self.options_menu_difficulty_frame = ttk.Frame(self.options_menu_frame, style='quiz_colour.TFrame')
@@ -118,7 +118,7 @@ class GUI:
         self.options_menu_hard_radio_button.grid(column=0, row=2, padx=10, pady=10, ipadx=50, ipady=10, sticky='nsew')
 
         
-        self.options_menu_subjects_label = ttk.Label(self.options_menu_frame, text='Choose your subjects: ', style='options_menu_labels.TLabel')
+        self.options_menu_subjects_label = ttk.Label(self.options_menu_frame, text='Choose Your Subjects: ', style='options_menu_labels.TLabel')
         self.options_menu_subjects_label.grid(column=1, row=0)
         
         self.options_menu_subject_check_button_list = []
@@ -194,7 +194,7 @@ class GUI:
         self.end_title_label.grid(column=0, row=0, columnspan=2)
         
         self.gui_style.configure('end_stats_label.TLabel', font=('Arial', 20))
-        self.end_stats_label = ttk.Label(self.end_frame, text='Questions answered: \n\nQuestions Correct: \n\nQuestions Incorrect: \n\nScore:', style='end_stats_label.TLabel')
+        self.end_stats_label = ttk.Label(self.end_frame, text='Questions Answered: \n\nQuestions Correct: \n\nQuestions Incorrect: \n\nScore:', style='end_stats_label.TLabel')
         self.end_stats_label.grid(column=0, row=1)
 
         self.end_stats_display_label = ttk.Label(self.end_frame, text='', style='end_stats_label.TLabel')
@@ -225,7 +225,7 @@ class GUI:
             elif size < 10:
                 size = 10
             self.gui_style.configure('temp_button.TCheckbutton', font=('Arial', size))
-            temp_button = ttk.Checkbutton(self.options_menu_subject_check_button_frame, variable=var, text=subject_string, onvalue=subject_string, offvalue='', style='temp_button.TCheckbutton')
+            temp_button = ttk.Checkbutton(self.options_menu_subject_check_button_frame, variable=var, text=subject_string.title(), onvalue=subject_string, offvalue='', style='temp_button.TCheckbutton')
             temp_button.var = var
             temp_button.pack(padx=size//5, pady=size//5, ipadx=size//10, ipady=2, anchor='w')
             temp_button
@@ -259,23 +259,23 @@ class GUI:
         self.quiz_answer_radiobutton2.grid_forget()
         self.quiz_answer_radiobutton3.grid_forget()
         self.quiz_answer_radiobutton4.grid_forget()
-        self.quiz_question_label.configure(text=question.question)
+        self.quiz_question_label.configure(text=question.question.title())
         if len(question.all_answers) == 1:
             self.quiz_answer_entry.configure(state=NORMAL)
             self.quiz_answer_entry.delete(0, END)
             self.quiz_answer_entry.focus()
             self.quiz_answer_entry.grid(column=0, row=1, ipadx=100, columnspan=2)
         elif len(question.all_answers) >= 2:
-            self.quiz_answer_radiobutton1.configure(text=answers[0], value=answers[0], state=NORMAL)
-            self.quiz_answer_radiobutton2.configure(text=answers[1], value=answers[1], state=NORMAL)
+            self.quiz_answer_radiobutton1.configure(text=answers[0].title(), value=answers[0], state=NORMAL)
+            self.quiz_answer_radiobutton2.configure(text=answers[1].title(), value=answers[1], state=NORMAL)
             self.quiz_answer_radiobutton1.grid(column=0, row=1, sticky='sew', ipadx=10, ipady=10, padx=(20, 5), pady=5)
             self.quiz_answer_radiobutton2.grid(column=1, row=1, sticky='sew', ipadx=10, ipady=10, padx=(5, 20), pady=5)
             if len(question.all_answers) == 3:
-                self.quiz_answer_radiobutton3.configure(text=answers[2], value=answers[2], state=NORMAL)
+                self.quiz_answer_radiobutton3.configure(text=answers[2].title(), value=answers[2], state=NORMAL)
                 self.quiz_answer_radiobutton3.grid(column=0, row=2, columnspan=2, sticky='new', ipadx=10, ipady=10, padx=20, pady=5)
             elif len(question.all_answers) == 4:
-                self.quiz_answer_radiobutton3.configure(text=answers[2], value=answers[2], state=NORMAL)
-                self.quiz_answer_radiobutton4.configure(text=answers[3], value=answers[3], state=NORMAL)
+                self.quiz_answer_radiobutton3.configure(text=answers[2].title(), value=answers[2], state=NORMAL)
+                self.quiz_answer_radiobutton4.configure(text=answers[3].title(), value=answers[3], state=NORMAL)
                 self.quiz_answer_radiobutton3.grid(column=0, row=2, sticky='new', ipadx=10, ipady=10, padx=(20, 5), pady=5)
                 self.quiz_answer_radiobutton4.grid(column=1, row=2, sticky='new', ipadx=10, ipady=10, padx=(5, 20), pady=5)
 
@@ -300,8 +300,7 @@ class GUI:
             self.gui_style.configure('end_title_label.TLabel', background=self.background_colours[0])
             self.gui_style.configure('end_stats_label.TLabel', background=self.background_colours[0])
             score = round(100-self.end_stats_incorrect_questions_counter_variable/(self.QUESTIONS_PER_TOPIC//3)*100, 2)
-            self.end_stats_display_label.configure(text=f"""{self.QUESTIONS_PER_TOPIC//3}\n\n{self.end_stats_correct_questions_counter_variable}
-\n{self.end_stats_incorrect_questions_counter_variable}\n\n{score}""")
+            self.end_stats_display_label.configure(text=f"""  {self.QUESTIONS_PER_TOPIC//3}\n\n  {self.end_stats_correct_questions_counter_variable}\n\n  {self.end_stats_incorrect_questions_counter_variable}\n\n{score}%""")
             self.end_frame.grid(column=0, row=0, sticky='nsew')
         else:
             if len(self.all_quiz_questions.keys()) >= 4:
@@ -338,6 +337,7 @@ class GUI:
             self.options_menu_subject_check_button_list[0].focus()
         elif self.options_menu_difficulty_variable.get() == -1:
             messagebox.showwarning('Invalid Input', 'Please select difficulty')
+            self.options_menu_easy_radio_button.focus()
         else:
             for subject in self.subjects_selected_list:
                 startvar = int(self.options_menu_difficulty_variable.get()*self.QUESTIONS_PER_TOPIC/3) # gets the first value in the subject list of questions to pull from
@@ -352,9 +352,13 @@ class GUI:
         and change the states of all the buttons to the opposite (all disabled except 'quiz_next_button')"""
         if self.currect_question.incorrect_answer1 == '': # A single answer question will always be a maths question
             try:
-                float(self.quiz_answer_variable.get())
+                self.quiz_answer_variable.set(int(self.quiz_answer_variable.get()))
             except:
-                messagebox.showwarning('Invalid Input', 'Please enter a number')
+                try:
+                    float(self.quiz_answer_variable.get())
+                    messagebox.showwarning('Invalid Input', 'Please enter a whole number')
+                except:
+                    messagebox.showwarning('Invalid Input', 'Please enter a number')
                 self.quiz_answer_entry.delete(0, END)
                 self.quiz_answer_entry.focus()
                 return
@@ -367,7 +371,7 @@ class GUI:
             self.end_stats_correct_questions_counter_variable += 1
         else:
             self.gui_style.configure('quiz_correct_incorrect_label.TLabel', background="#f45656")
-            self.quiz_correct_incorrect_label.configure(text=f'Inncorrect! The correct answer is {self.currect_question.correct_answer}')
+            self.quiz_correct_incorrect_label.configure(text=f'Inncorrect! The Correct Answer Is {self.currect_question.correct_answer.title()}')
             self.end_stats_incorrect_questions_counter_variable += 1
         self.quiz_correct_incorrect_label.grid(column=0, row=3, columnspan=2, ipady=10, ipadx=10, pady=5, padx=130, sticky='new')
         self.quiz_check_answer_button.configure(state=DISABLED)
