@@ -361,6 +361,8 @@ class GUI:
                         self.quiz_answer_entry.delete(0, END)
                         self.quiz_answer_entry.focus()
                         return
+                    else:
+                        self.quiz_answer_variable.set(int(float(self.quiz_answer_variable.get())))
                 except:
                     messagebox.showwarning('Invalid Input', 'Please enter a number')
                     self.quiz_answer_entry.delete(0, END)
