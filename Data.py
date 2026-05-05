@@ -1,3 +1,5 @@
+"""Stores all the quiz questions in the format Chat GPT put them in."""
+
 maths = {
     'arithmetic': [
         {'question': '1 + 1 =', 'correct_answer': 2},
