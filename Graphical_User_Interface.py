@@ -302,6 +302,7 @@ class GUI:
             score = round(100-self.end_stats_incorrect_questions_counter_variable/(self.QUESTIONS_PER_TOPIC//3)*100, 2)
             self.end_stats_display_label.configure(text=f"""  {self.QUESTIONS_PER_TOPIC//3}\n\n  {self.end_stats_correct_questions_counter_variable}\n\n  {self.end_stats_incorrect_questions_counter_variable}\n\n{score}%""")
             self.end_frame.grid(column=0, row=0, sticky='nsew')
+            self.end_return_to_start_button.focus()
         else:
             if len(self.all_quiz_questions.keys()) >= 4:
                 subjects = sample(list(self.all_quiz_questions.keys()), 4)
@@ -355,13 +356,17 @@ class GUI:
                 self.quiz_answer_variable.set(int(self.quiz_answer_variable.get()))
             except:
                 try:
-                    float(self.quiz_answer_variable.get())
-                    messagebox.showwarning('Invalid Input', 'Please enter a whole number')
+                    if float(self.quiz_answer_variable.get()) != int(float(self.quiz_answer_variable.get())):
+                        messagebox.showwarning('Invalid Input', 'Please enter a whole number')
+                        self.quiz_answer_entry.delete(0, END)
+                        self.quiz_answer_entry.focus()
+                        return
                 except:
                     messagebox.showwarning('Invalid Input', 'Please enter a number')
-                self.quiz_answer_entry.delete(0, END)
-                self.quiz_answer_entry.focus()
-                return
+                    self.quiz_answer_entry.delete(0, END)
+                    self.quiz_answer_entry.focus()
+                    return
+                
         elif not self.quiz_answer_variable.get() in self.currect_question.all_answers:
             messagebox.showwarning('Invalid Input', 'Please select an answer')
             return
